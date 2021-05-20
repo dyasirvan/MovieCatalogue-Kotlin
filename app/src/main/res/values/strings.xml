@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MovieCatalogue</string>
+    <string name="movie">Movie</string>
+    <string name="tv_show">Tv Show</string>
+    <string name="_75">75%</string>
+    <string name="title">Title</string>
+    <string name="thumbnail">Thumbnail</string>
+    <string name="date">Mar 13, 2021</string>
+    <string name="genre">Crime, Thriller, Action</string>
+    <string name="duration">1h 40m</string>
+    <string name="play_trailer">Play Trailer</string>
+    <string name="overview">Overview</string>
+    <string name="score">Score</string>
+    <string name="nr">NR</string>
+    <string name="status">Aired</string>
+</resources>
