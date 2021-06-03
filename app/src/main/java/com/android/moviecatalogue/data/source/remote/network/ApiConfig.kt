@@ -1,4 +1,4 @@
-package com.android.moviecatalogue.api
+package com.android.moviecatalogue.data.source.remote.network
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

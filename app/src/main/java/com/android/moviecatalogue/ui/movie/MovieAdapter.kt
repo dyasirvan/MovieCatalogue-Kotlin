@@ -4,28 +4,35 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.android.moviecatalogue.R
-import com.android.moviecatalogue.api.ApiConfig.Companion.IMAGE_URL
-import com.android.moviecatalogue.data.source.remote.response.ResultMovie
+import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
+import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.IMAGE_URL
 import com.android.moviecatalogue.databinding.ItemMovieBinding
 import com.android.moviecatalogue.ui.detail.DetailActivity
+import com.android.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_FAVORITE
 import com.android.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_MOVIE
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlin.math.roundToInt
 
-class MovieAdapter: RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
-    private var listMovies = ArrayList<ResultMovie>()
+class MovieAdapter: PagedListAdapter<MovieTvEntity, MovieAdapter.MovieViewHolder>(DIFF_CALLBACK) {
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MovieTvEntity>() {
+            override fun areItemsTheSame(oldItem: MovieTvEntity, newItem: MovieTvEntity): Boolean {
+                return oldItem.idFavorite == newItem.idFavorite
+            }
 
-    fun setMovie(data: List<ResultMovie>?) {
-        if (data == null) return
-        this.listMovies.clear()
-        this.listMovies.addAll(data)
+            override fun areContentsTheSame(oldItem: MovieTvEntity, newItem: MovieTvEntity): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 
     class MovieViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(data: ResultMovie) {
+        fun bind(data: MovieTvEntity) {
             with(binding) {
                 tvTitle.text = data.title
                 val scorePercent = data.voteAverage!! * 10
@@ -46,6 +53,8 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
                 itemView.setOnClickListener {
                     val intent = Intent(itemView.context, DetailActivity::class.java).also {
                         it.putExtra(EXTRA_MOVIE, data.id)
+                        it.putExtra(EXTRA_FAVORITE, data.isFavorite)
+                        it.putExtra("entity", data)
                     }
                     itemView.context.startActivity(intent)
                 }
@@ -69,9 +78,10 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = listMovies[position]
-        holder.bind(movie)
+        val movie = getItem(position)
+        if(movie != null) {
+            holder.bind(movie)
+        }
     }
 
-    override fun getItemCount(): Int = listMovies.size
 }

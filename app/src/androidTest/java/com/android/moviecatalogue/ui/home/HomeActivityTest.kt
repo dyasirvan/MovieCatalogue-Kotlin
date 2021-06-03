@@ -49,21 +49,17 @@ class HomeActivityTest {
         onView(withText("Movie")).perform(click())
         onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
         onView(withId(R.id.tv_title)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_title)).check(matches(withText(dummyMovie[0].title)))
+
         onView(withId(R.id.tv_genre)).check(matches(isDisplayed()))
-        val genres = dummyMovie[0].genre.map { genre -> genre.name }.joinToString(separator = ", ")
-        onView(withId(R.id.tv_genre)).check(matches(withText(genres)))
+
         onView(withId(R.id.tv_overview_desc)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_overview_desc)).check(matches(withText(dummyMovie[0].overview)))
+
         onView(withId(R.id.tv_date)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_date)).check(matches(withText(dummyMovie[0].dateRelease)))
+
         onView(withId(R.id.tv_score)).check(matches(isDisplayed()))
-        val temp = dummyMovie[0].score!! * 10
-        val toInt = temp.roundToInt()
-        val percent = "$toInt%"
-        onView(withId(R.id.tv_score)).check(matches(withText(percent)))
+
         onView(withId(R.id.tv_status)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_status)).check(matches(withText(dummyMovie[0].status)))
+
         onView(withId(R.id.img_thumbnail)).check(matches(isDisplayed()))
     }
 
@@ -80,21 +76,17 @@ class HomeActivityTest {
         onView(withText("Tv Show")).perform(click())
         onView(withId(R.id.rv_tv_show)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
         onView(withId(R.id.tv_title)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_title)).check(matches(withText(dummyTvShow[0].title)))
+
         onView(withId(R.id.tv_genre)).check(matches(isDisplayed()))
-        val genres = dummyTvShow[0].genre.map { genre -> genre.name }.joinToString(separator = ", ")
-        onView(withId(R.id.tv_genre)).check(matches(withText(genres)))
+
         onView(withId(R.id.tv_overview_desc)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_overview_desc)).check(matches(withText(dummyTvShow[0].overview)))
+
         onView(withId(R.id.tv_date)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_date)).check(matches(withText(dummyTvShow[0].dateRelease)))
+
         onView(withId(R.id.tv_score)).check(matches(isDisplayed()))
-        val temp = dummyTvShow[0].score!! * 10
-        val toInt = temp.roundToInt()
-        val percent = "$toInt%"
-        onView(withId(R.id.tv_score)).check(matches(withText(percent)))
+
         onView(withId(R.id.tv_status)).check(matches(isDisplayed()))
-        onView(withId(R.id.tv_status)).check(matches(withText(dummyTvShow[0].status)))
+
         onView(withId(R.id.img_thumbnail)).check(matches(isDisplayed()))
     }
 }

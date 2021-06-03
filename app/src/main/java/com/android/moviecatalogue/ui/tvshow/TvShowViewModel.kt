@@ -2,15 +2,17 @@ package com.android.moviecatalogue.ui.tvshow
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.PagedList
 import com.android.moviecatalogue.data.MovieCatalogueRepository
-import com.android.moviecatalogue.data.source.remote.response.ResultTvShow
+import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
+import com.android.moviecatalogue.vo.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TvShowViewModel(private val movieCatalogueRepository: MovieCatalogueRepository): ViewModel() {
-    private lateinit var tvShow: LiveData<List<ResultTvShow>>
+@HiltViewModel
+class TvShowViewModel @Inject constructor(
+    private val movieCatalogueRepository: MovieCatalogueRepository): ViewModel() {
 
-    fun setTvShows(apiKey: String){
-        tvShow = movieCatalogueRepository.getTvShows(apiKey)
-    }
-
-    fun getTvShows(): LiveData<List<ResultTvShow>> = tvShow
+    fun getTvShows(): LiveData<Resource<PagedList<MovieTvEntity>>> =
+        movieCatalogueRepository.getTvShows()
 }

@@ -4,10 +4,12 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.android.moviecatalogue.R
-import com.android.moviecatalogue.api.ApiConfig.Companion.IMAGE_URL
-import com.android.moviecatalogue.data.source.remote.response.ResultTvShow
+import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
+import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.IMAGE_URL
 import com.android.moviecatalogue.databinding.ItemTvShowBinding
 import com.android.moviecatalogue.ui.detail.DetailActivity
 import com.android.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_TV_SHOW
@@ -15,19 +17,23 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlin.math.roundToInt
 
-class TvShowAdapter: RecyclerView.Adapter<TvShowAdapter.TvShowViewHolder>() {
-    private var listTvShows = ArrayList<ResultTvShow>()
+class TvShowAdapter: PagedListAdapter<MovieTvEntity, TvShowAdapter.TvShowViewHolder>(DIFF_CALLBACK) {
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MovieTvEntity>() {
+            override fun areItemsTheSame(oldItem: MovieTvEntity, newItem: MovieTvEntity): Boolean {
+                return oldItem.idFavorite == newItem.idFavorite
+            }
 
-    fun setTvShow(tvShows: List<ResultTvShow>?) {
-        if (tvShows == null) return
-        this.listTvShows.clear()
-        this.listTvShows.addAll(tvShows)
+            override fun areContentsTheSame(oldItem: MovieTvEntity, newItem: MovieTvEntity): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 
     class TvShowViewHolder(private val binding: ItemTvShowBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(tvShow: ResultTvShow) {
+        fun bind(tvShow: MovieTvEntity) {
             with(binding) {
-                tvTitle.text = tvShow.name
+                tvTitle.text = tvShow.title
                 val scorePercent = tvShow.voteAverage!! * 10
                 val toInt = scorePercent.roundToInt()
                 when {
@@ -57,7 +63,7 @@ class TvShowAdapter: RecyclerView.Adapter<TvShowAdapter.TvShowViewHolder>() {
                             .error(R.drawable.ic_error))
                     .into(imgThumbnail)
 
-                tvDate.text = tvShow.firstAirDate
+                tvDate.text = tvShow.releaseDate
             }
         }
     }
@@ -70,9 +76,10 @@ class TvShowAdapter: RecyclerView.Adapter<TvShowAdapter.TvShowViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: TvShowViewHolder, position: Int) {
-        val tvShow = listTvShows[position]
-        holder.bind(tvShow)
+        val tvShow = getItem(position)
+        if(tvShow != null) {
+            holder.bind(tvShow)
+        }
     }
 
-    override fun getItemCount(): Int = listTvShows.size
 }

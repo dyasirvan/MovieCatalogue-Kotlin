@@ -2,24 +2,28 @@ package com.android.moviecatalogue.ui.detail
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.android.moviecatalogue.R
-import com.android.moviecatalogue.api.ApiConfig.Companion.API_KEY
-import com.android.moviecatalogue.api.ApiConfig.Companion.IMAGE_URL
+import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
+import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.API_KEY
+import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.IMAGE_URL
 import com.android.moviecatalogue.data.source.remote.response.DetailMovieResponse
 import com.android.moviecatalogue.data.source.remote.response.DetailTvShowResponse
 import com.android.moviecatalogue.databinding.ActivityDetailBinding
 import com.android.moviecatalogue.utils.EspressoIdlingResource
-import com.android.moviecatalogue.viewmodel.ViewModelFactory
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
+    private val viewModel: DetailViewModel by viewModels()
 
     @InternalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,16 +35,13 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Detail"
 
-        val factory = ViewModelFactory.getInstance()
-        val viewModel = ViewModelProvider(this, factory)[DetailViewModel::class.java]
-
         EspressoIdlingResource.increment()
         val extras = intent.extras
         if (extras != null) {
 
             val movieId = extras.getInt(EXTRA_MOVIE)
 
-            viewModel.setSelectedMovie(movieId, API_KEY)
+            viewModel.setSelectedMovie(movieId)
             viewModel.getMovie().observe(this, {
 
                 showDetailMovie(it)
@@ -50,9 +51,19 @@ class DetailActivity : AppCompatActivity() {
                 }
 
             })
+            var statusFavorite = extras.getBoolean(EXTRA_FAVORITE)
+            val movieEntity = intent.getParcelableExtra<MovieTvEntity>("entity")
+            setStatusFavorite(statusFavorite)
+            binding.fabFavorite.setOnClickListener {
+                statusFavorite = !statusFavorite
+                if (movieEntity != null) {
+                    viewModel.setFavorite(movieEntity, statusFavorite)
+                }
+                setStatusFavorite(statusFavorite)
+            }
 
             val tvShowId = extras.getInt(EXTRA_TV_SHOW)
-            viewModel.setSelectedTvShow(tvShowId, API_KEY)
+            viewModel.setSelectedTvShow(tvShowId)
             viewModel.getTvShow().observe(this, {
 
                 showDetailTvShow(it)
@@ -61,8 +72,8 @@ class DetailActivity : AppCompatActivity() {
                 }
             })
 
-
         }
+
     }
 
     private fun showDetailMovie(data: DetailMovieResponse) {
@@ -139,8 +150,17 @@ class DetailActivity : AppCompatActivity() {
         binding.tvOverviewDesc.text = data.overview
     }
 
+    private fun setStatusFavorite(statusFavorite: Boolean) {
+        if (statusFavorite) {
+            binding.fabFavorite.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_favorite_24))
+        } else {
+            binding.fabFavorite.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_favorite_border_24))
+        }
+    }
+
     companion object{
         const val EXTRA_MOVIE = "extra_movie"
         const val EXTRA_TV_SHOW = "extra_tv_show"
+        const val EXTRA_FAVORITE = "favorite"
     }
 }

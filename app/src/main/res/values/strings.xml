@@ -13,4 +13,6 @@
     <string name="score">Score</string>
     <string name="nr">NR</string>
     <string name="status">Aired</string>
+    <string name="favorite">Favorite</string>
+    <string name="button">Button</string>
 </resources>

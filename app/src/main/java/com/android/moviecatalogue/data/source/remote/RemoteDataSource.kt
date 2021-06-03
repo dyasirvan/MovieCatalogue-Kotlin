@@ -2,88 +2,87 @@ package com.android.moviecatalogue.data.source.remote
 
 import android.os.Handler
 import android.os.Looper
-import com.android.moviecatalogue.api.ApiService
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.android.moviecatalogue.data.source.remote.network.ApiService
 import com.android.moviecatalogue.data.source.remote.response.*
 import com.android.moviecatalogue.utils.DataDummy
 import com.android.moviecatalogue.utils.EspressoIdlingResource
-import kotlinx.coroutines.InternalCoroutinesApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 
-class RemoteDataSource private constructor(private val apiService: ApiService){
+class RemoteDataSource @Inject constructor(private val apiService: ApiService){
+    private val handler = Handler(Looper.getMainLooper())
+
     companion object{
-        @Volatile
-        private var instance: RemoteDataSource? = null
-        @InternalCoroutinesApi
-        fun getInstance(helper: ApiService): RemoteDataSource =
-            instance ?: kotlinx.coroutines.internal.synchronized(this) {
-                instance ?: RemoteDataSource(helper)
-            }
+        private const val SERVICE_LATENCY_IN_MILLIS: Long = 5000
+
     }
 
-    fun getMovies(apiKey: String, callback: LoadMoviesCallback){
+    fun getMovies(): LiveData<ApiResponse<List<ResultMovie>>>{
         EspressoIdlingResource.increment()
 
-        apiService.getMovies(apiKey).enqueue(object : Callback<MovieResponse> {
-            override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val movies = response.body()?.resultMovies
-                    if (movies != null) {
-                        callback.onAllMoviesReceive(movies)
+        val result = MutableLiveData<ApiResponse<List<ResultMovie>>>()
+        handler.postDelayed({
+            apiService.getMovies().enqueue(object : Callback<MovieResponse> {
+                override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val movies = response.body()?.resultMovies
+                        if (movies != null) {
+                            result.value = ApiResponse.success(movies)
+                        }
+                        EspressoIdlingResource.decrement()
                     }
+                }
+
+                override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
+
                     EspressoIdlingResource.decrement()
                 }
-            }
 
-            override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
-                val dummyMovies = DataDummy.generateDataDummyMovies()
-                val resultMovies = arrayListOf<ResultMovie>()
-                dummyMovies.forEach{ dummy ->
-                    val entity = ResultMovie(dummy.id, dummy.imagePath, dummy.dateRelease, dummy.title, dummy.score)
-                    resultMovies.add(entity)
-                }
-                callback.onAllMoviesReceive(resultMovies.toList())
-                EspressoIdlingResource.decrement()
-            }
+            })
 
-        })
+        }, SERVICE_LATENCY_IN_MILLIS)
+
+        return result
     }
 
-    fun getTvShows(apiKey: String, callback: LoadTvsCallback){
+    fun getTvShows(): LiveData<ApiResponse<List<ResultTvShow>>>{
         EspressoIdlingResource.increment()
 
-        apiService.getTvShows(apiKey).enqueue(object : Callback<TvShowResponse> {
-            override fun onResponse(call: Call<TvShowResponse>, response: Response<TvShowResponse>
-            ) {
-                if (response.isSuccessful){
-                    val tvShow = response.body()?.resultTvShow
-                    if (tvShow != null) {
-                        callback.onAllTvsReceive(tvShow)
+        val result = MutableLiveData<ApiResponse<List<ResultTvShow>>>()
+        handler.postDelayed({
+            apiService.getTvShows().enqueue(object : Callback<TvShowResponse> {
+                override fun onResponse(call: Call<TvShowResponse>, response: Response<TvShowResponse>
+                ) {
+                    if (response.isSuccessful){
+                        val tvShow = response.body()?.resultTvShow
+                        if (tvShow != null) {
+                            result.value = ApiResponse.success(tvShow)
+                        }
+                        EspressoIdlingResource.decrement()
                     }
+                }
+
+                override fun onFailure(call: Call<TvShowResponse>, t: Throwable) {
+
                     EspressoIdlingResource.decrement()
                 }
-            }
 
-            override fun onFailure(call: Call<TvShowResponse>, t: Throwable) {
-                val dummyTv = DataDummy.generateDataDummyTvShows()
-                val resultTv = arrayListOf<ResultTvShow>()
-                dummyTv.forEach{ dummy ->
-                    val entity = ResultTvShow(dummy.id, dummy.imagePath, dummy.dateRelease, dummy.title, dummy.score)
-                    resultTv.add(entity)
-                }
-                callback.onAllTvsReceive(resultTv.toList())
-                EspressoIdlingResource.decrement()
-            }
+            })
 
-        })
+        }, SERVICE_LATENCY_IN_MILLIS)
+
+        return result
     }
 
-    fun getDetailMovie(id: Int, apiKey: String, callback: LoadDetailMovieCallback) {
+    fun getDetailMovie(id: Int, callback: LoadDetailMovieCallback) {
 //        EspressoIdlingResource.increment()
-        apiService.getDetailMovie(id = id, key = apiKey).enqueue(object : Callback<DetailMovieResponse>{
+        apiService.getDetailMovie(id = id).enqueue(object : Callback<DetailMovieResponse>{
             override fun onResponse(call: Call<DetailMovieResponse>,
                                     response: Response<DetailMovieResponse>) {
                 if (response.isSuccessful){
@@ -120,8 +119,8 @@ class RemoteDataSource private constructor(private val apiService: ApiService){
         })
     }
 
-    fun getDetailTvShow(id: Int, apiKey: String, callback: LoadDetailTvCallback) {
-        apiService.getDetailTvShow(id = id, key = apiKey).enqueue(object : Callback<DetailTvShowResponse>{
+    fun getDetailTvShow(id: Int, callback: LoadDetailTvCallback) {
+        apiService.getDetailTvShow(id = id).enqueue(object : Callback<DetailTvShowResponse>{
             override fun onResponse(call: Call<DetailTvShowResponse>,
                                     response: Response<DetailTvShowResponse>) {
                 if (response.isSuccessful){

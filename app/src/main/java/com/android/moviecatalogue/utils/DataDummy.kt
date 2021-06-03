@@ -1,6 +1,8 @@
 package com.android.moviecatalogue.utils
 
 import com.android.moviecatalogue.data.source.local.entity.DataEntity
+import com.android.moviecatalogue.data.source.remote.response.DetailMovieResponse
+import com.android.moviecatalogue.data.source.remote.response.DetailTvShowResponse
 import com.android.moviecatalogue.data.source.remote.response.Genre
 
 object DataDummy {
@@ -9,13 +11,13 @@ object DataDummy {
 
         movie.add(
             DataEntity(1,
-            "Mortal Kombat",
-            listOf(Genre("Action, Fantasy, Adventure")),
-            "Washed-up MMA fighter Cole Young, unaware of his heritage, and hunted by Emperor Shang Tsung's best warrior, Sub-Zero, seeks out and trains with Earth's greatest champions as he prepares to stand against the enemies of Outworld in a high stakes battle for the universe.",
-            "2021-04-07",
-            7.6,
+            "Dilwale Dulhania Le Jayenge",
+            listOf(Genre("Comedy, Drama, Romance")),
+            "Raj is a rich, carefree, happy-go-lucky second generation NRI. Simran is the daughter of Chaudhary Baldev Singh, who in spite of being an NRI is very strict about adherence to Indian values. Simran has left for India to be married to her childhood fiancé. Raj leaves for India with a mission at his hands, to claim his lady love under the noses of her whole family. Thus begins a saga.",
+            "1995-10-20",
+            8.7,
                 "Released",
-            "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/xGuOF1T3WmPsAcQEQJfnG7Ud9f8.jpg")
+            "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/2CAL2433ZeIihfX1Hb2139CX0pW.jpg")
         )
 
         movie.add(
@@ -117,12 +119,12 @@ object DataDummy {
 
         tvShow.add(
             DataEntity(1,
-            "The Bad Batch",
-            listOf(Genre("Sci-Fi & Fantasy, Action & Adventure, Animation")),
-            "Follow the elite and experimental Clones of the Bad Batch as they find their way in a rapidly changing galaxy in the aftermath of the Clone Wars.",
-            "2021-05-04",
-            9.0,"Returning Series",
-            "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/WjQmEWFrOf98nT5aEfUfVYz9N2.jpg")
+            "I Am Not an Animal",
+            listOf(Genre("Animation, Comedy")),
+            "I Am Not An Animal is an animated comedy series about the only six talking animals in the world, whose cosseted existence in a vivisection unit is turned upside down when they are liberated by animal rights activists.",
+            "2004-05-10",
+            9.4,"Ended",
+            "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/qG59J1Q7rpBc1dvku4azbzcqo8h.jpg")
         )
 
         tvShow.add(
@@ -220,4 +222,26 @@ object DataDummy {
 
         return tvShow
     }
+
+    val dummyDetailMovies = DetailMovieResponse(
+        listOf(Genre("Comedy, Drama, Romance")),
+        1,
+        "Raj is a rich, carefree, happy-go-lucky second generation NRI. Simran is the daughter of Chaudhary Baldev Singh, who in spite of being an NRI is very strict about adherence to Indian values. Simran has left for India to be married to her childhood fiancé. Raj leaves for India with a mission at his hands, to claim his lady love under the noses of her whole family. Thus begins a saga.",
+        "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/2CAL2433ZeIihfX1Hb2139CX0pW.jpg",
+        "1995-10-20",
+        "Released",
+        "Dilwale Dulhania Le Jayenge",
+        8.7
+    )
+
+    val dummyDetailTvShow = DetailTvShowResponse(
+        "2004-05-10",
+        listOf(Genre("Animation, Comedy")),
+        1,
+        "I Am Not an Animal",
+        "I Am Not An Animal is an animated comedy series about the only six talking animals in the world, whose cosseted existence in a vivisection unit is turned upside down when they are liberated by animal rights activists.",
+        "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/qG59J1Q7rpBc1dvku4azbzcqo8h.jpg",
+        "Ended",
+        9.4
+    )
 }

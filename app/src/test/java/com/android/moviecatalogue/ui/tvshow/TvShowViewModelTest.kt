@@ -3,7 +3,7 @@ package com.android.moviecatalogue.ui.tvshow
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.android.moviecatalogue.api.ApiConfig.Companion.API_KEY
+import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.API_KEY
 import com.android.moviecatalogue.data.MovieCatalogueRepository
 import com.android.moviecatalogue.data.source.remote.response.ResultTvShow
 import com.android.moviecatalogue.utils.DataDummy

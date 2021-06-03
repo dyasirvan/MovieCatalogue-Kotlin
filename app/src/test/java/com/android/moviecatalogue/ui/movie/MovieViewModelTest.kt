@@ -3,7 +3,7 @@ package com.android.moviecatalogue.ui.movie
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.android.moviecatalogue.api.ApiConfig.Companion.API_KEY
+import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.API_KEY
 import com.android.moviecatalogue.data.MovieCatalogueRepository
 import com.android.moviecatalogue.data.source.remote.response.ResultMovie
 import com.android.moviecatalogue.utils.DataDummy
@@ -16,7 +16,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
-import kotlin.math.roundToInt
 
 @RunWith(MockitoJUnitRunner::class)
 class MovieViewModelTest {

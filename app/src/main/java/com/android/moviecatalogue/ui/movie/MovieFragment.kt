@@ -5,24 +5,32 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.moviecatalogue.R
-import com.android.moviecatalogue.api.ApiConfig.Companion.API_KEY
+import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.API_KEY
 import com.android.moviecatalogue.databinding.FragmentMovieBinding
 import com.android.moviecatalogue.utils.CustomMarginItemDecoration
-import com.android.moviecatalogue.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.InternalCoroutinesApi
+import androidx.fragment.app.viewModels
+import com.android.moviecatalogue.vo.Status
 
+@AndroidEntryPoint
 class MovieFragment : Fragment() {
     private lateinit var fragmentMovieBinding: FragmentMovieBinding
+    private val movieViewModel: MovieViewModel by viewModels()
 
     @InternalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (activity != null) {
-            showLoading(true)
+//            showLoading(true)
 
+            getMovies()
+
+            /*
             val factory = ViewModelFactory.getInstance()
             val viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
 
@@ -38,7 +46,34 @@ class MovieFragment : Fragment() {
                 }
             })
 
+             */
 
+        }
+    }
+
+    private fun getMovies() {
+        val movieAdapter = MovieAdapter()
+        movieViewModel.getMovies().observe(viewLifecycleOwner, { movies ->
+            if(movies != null){
+                when(movies.status){
+                    Status.LOADING -> showLoading(true)
+                    Status.SUCCESS -> {
+                        showLoading(false)
+                        movieAdapter.submitList(movies.data)
+                    }
+                    Status.ERROR -> {
+                        showLoading(false)
+                        Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+
+        with(fragmentMovieBinding.rvMovie) {
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            addItemDecoration(CustomMarginItemDecoration(resources.getDimension(R.dimen.margin_16).toInt()))
+            setHasFixedSize(true)
+            adapter = movieAdapter
         }
     }
 
