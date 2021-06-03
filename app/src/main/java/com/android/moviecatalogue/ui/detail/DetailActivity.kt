@@ -4,10 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.android.moviecatalogue.R
 import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
-import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.API_KEY
 import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.IMAGE_URL
 import com.android.moviecatalogue.data.source.remote.response.DetailMovieResponse
 import com.android.moviecatalogue.data.source.remote.response.DetailTvShowResponse
@@ -36,6 +34,53 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.title = "Detail"
 
         EspressoIdlingResource.increment()
+
+        val data = intent.getParcelableExtra<MovieTvEntity>(EXTRA_ENTITY)
+        if(data != null){
+            when(data.type){
+                "Movie" -> {
+                    data.id?.let { viewModel.setSelectedMovie(it) }
+                    viewModel.getMovie().observe(this, {
+
+                        showDetailMovie(it)
+
+                        if(!EspressoIdlingResource.idlingResource.isIdleNow){
+                            EspressoIdlingResource.decrement()
+                        }
+
+                    })
+                    var statusFavorite = data.isFavorite
+                    setStatusFavorite(statusFavorite)
+                    binding.fabFavorite.setOnClickListener {
+                        statusFavorite = !statusFavorite
+                        viewModel.setFavorite(data, statusFavorite)
+                        setStatusFavorite(statusFavorite)
+                    }
+                }
+                "TvShow" -> {
+                    data.id?.let { viewModel.setSelectedTvShow(it) }
+                    viewModel.getTvShow().observe(this, {
+
+                        showDetailTvShow(it)
+
+                        if(!EspressoIdlingResource.idlingResource.isIdleNow){
+                            EspressoIdlingResource.decrement()
+                        }
+
+                    })
+                    var statusFavorite = data.isFavorite
+                    setStatusFavorite(statusFavorite)
+                    binding.fabFavorite.setOnClickListener {
+                        statusFavorite = !statusFavorite
+                        viewModel.setFavorite(data, statusFavorite)
+                        setStatusFavorite(statusFavorite)
+                    }
+                }
+            }
+
+        }
+
+        /*
         val extras = intent.extras
         if (extras != null) {
 
@@ -73,6 +118,8 @@ class DetailActivity : AppCompatActivity() {
             })
 
         }
+
+         */
 
     }
 
@@ -159,8 +206,6 @@ class DetailActivity : AppCompatActivity() {
     }
 
     companion object{
-        const val EXTRA_MOVIE = "extra_movie"
-        const val EXTRA_TV_SHOW = "extra_tv_show"
-        const val EXTRA_FAVORITE = "favorite"
+        const val EXTRA_ENTITY = "entity"
     }
 }

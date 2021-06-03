@@ -6,15 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.moviecatalogue.R
-import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.API_KEY
 import com.android.moviecatalogue.databinding.FragmentMovieBinding
 import com.android.moviecatalogue.utils.CustomMarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.InternalCoroutinesApi
 import androidx.fragment.app.viewModels
+import com.android.moviecatalogue.ui.adapter.MovieTvAdapter
 import com.android.moviecatalogue.vo.Status
 
 @AndroidEntryPoint
@@ -34,7 +33,7 @@ class MovieFragment : Fragment() {
             val factory = ViewModelFactory.getInstance()
             val viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
 
-            val movieAdapter = MovieAdapter()
+            val movieAdapter = MovieTvAdapter()
             viewModel.setMovies(API_KEY)
             viewModel.getMovies().observe(viewLifecycleOwner,{
                 showLoading(false)
@@ -52,7 +51,7 @@ class MovieFragment : Fragment() {
     }
 
     private fun getMovies() {
-        val movieAdapter = MovieAdapter()
+        val movieAdapter = MovieTvAdapter()
         movieViewModel.getMovies().observe(viewLifecycleOwner, { movies ->
             if(movies != null){
                 when(movies.status){

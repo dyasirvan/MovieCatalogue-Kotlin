@@ -1,4 +1,4 @@
-package com.android.moviecatalogue.ui.movie
+package com.android.moviecatalogue.ui.adapter
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -12,13 +12,12 @@ import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
 import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.IMAGE_URL
 import com.android.moviecatalogue.databinding.ItemMovieBinding
 import com.android.moviecatalogue.ui.detail.DetailActivity
-import com.android.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_FAVORITE
-import com.android.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_MOVIE
+import com.android.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_ENTITY
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlin.math.roundToInt
 
-class MovieAdapter: PagedListAdapter<MovieTvEntity, MovieAdapter.MovieViewHolder>(DIFF_CALLBACK) {
+class MovieTvAdapter: PagedListAdapter<MovieTvEntity, MovieTvAdapter.MovieViewHolder>(DIFF_CALLBACK) {
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MovieTvEntity>() {
             override fun areItemsTheSame(oldItem: MovieTvEntity, newItem: MovieTvEntity): Boolean {
@@ -52,9 +51,7 @@ class MovieAdapter: PagedListAdapter<MovieTvEntity, MovieAdapter.MovieViewHolder
                 tvScore.text = scoreDisplay
                 itemView.setOnClickListener {
                     val intent = Intent(itemView.context, DetailActivity::class.java).also {
-                        it.putExtra(EXTRA_MOVIE, data.id)
-                        it.putExtra(EXTRA_FAVORITE, data.isFavorite)
-                        it.putExtra("entity", data)
+                        it.putExtra(EXTRA_ENTITY, data)
                     }
                     itemView.context.startActivity(intent)
                 }
