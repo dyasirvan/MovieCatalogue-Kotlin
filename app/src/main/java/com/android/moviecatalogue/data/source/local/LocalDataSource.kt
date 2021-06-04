@@ -3,13 +3,12 @@ package com.android.moviecatalogue.data.source.local
 import androidx.paging.DataSource
 import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
 import com.android.moviecatalogue.data.source.local.room.MovieCatalogueDao
+import com.android.moviecatalogue.utils.FavoriteUtils
+import com.android.moviecatalogue.utils.MovieTvUtils
+import com.android.moviecatalogue.utils.SortUtils
 import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(private val mCatalogueDao: MovieCatalogueDao) {
-
-    fun getAllMovies(): DataSource.Factory<Int, MovieTvEntity> = mCatalogueDao.getMovies()
-
-    fun getAllTvShows(): DataSource.Factory<Int, MovieTvEntity> = mCatalogueDao.getTvShows()
 
     fun insertMovies(movieTvs: List<MovieTvEntity>) = mCatalogueDao.insertMoviesTvs(movieTvs)
 
@@ -18,5 +17,18 @@ class LocalDataSource @Inject constructor(private val mCatalogueDao: MovieCatalo
         mCatalogueDao.updateFavoriteMoviesTvs(movieTvEntity)
     }
 
-    fun getFavoriteMovies(): DataSource.Factory<Int, MovieTvEntity> = mCatalogueDao.getFavoriteMovies()
+    fun getFavoriteMovies(type: String): DataSource.Factory<Int, MovieTvEntity> {
+        val query = FavoriteUtils.getFavoriteQuery(type)
+        return mCatalogueDao.getFavorite(query)
+    }
+
+    fun getAllData(type: String): DataSource.Factory<Int, MovieTvEntity>{
+        val query = MovieTvUtils.getAllDataQuery(type)
+        return mCatalogueDao.getAllData(query)
+    }
+
+    fun sortByName(type: String, sort: String): DataSource.Factory<Int, MovieTvEntity>{
+        val query = SortUtils.getSortedQuery(type, sort)
+        return mCatalogueDao.sortByName(query)
+    }
 }

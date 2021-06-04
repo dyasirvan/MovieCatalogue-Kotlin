@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.InternalCoroutinesApi
 import androidx.fragment.app.viewModels
 import com.android.moviecatalogue.ui.adapter.MovieTvAdapter
+import com.android.moviecatalogue.utils.Constant
 import com.android.moviecatalogue.vo.Status
 
 @AndroidEntryPoint
@@ -25,34 +26,15 @@ class MovieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (activity != null) {
-//            showLoading(true)
 
             getMovies()
-
-            /*
-            val factory = ViewModelFactory.getInstance()
-            val viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
-
-            val movieAdapter = MovieTvAdapter()
-            viewModel.setMovies(API_KEY)
-            viewModel.getMovies().observe(viewLifecycleOwner,{
-                showLoading(false)
-                movieAdapter.setMovie(it)
-                with(fragmentMovieBinding.rvMovie) {
-                    layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    addItemDecoration(CustomMarginItemDecoration(resources.getDimension(R.dimen.margin_16).toInt()))
-                    adapter = movieAdapter
-                }
-            })
-
-             */
 
         }
     }
 
     private fun getMovies() {
         val movieAdapter = MovieTvAdapter()
-        movieViewModel.getMovies().observe(viewLifecycleOwner, { movies ->
+        movieViewModel.getMovies(Constant.MOVIE).observe(viewLifecycleOwner, { movies ->
             if(movies != null){
                 when(movies.status){
                     Status.LOADING -> showLoading(true)

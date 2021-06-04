@@ -9,15 +9,17 @@ import com.android.moviecatalogue.vo.Resource
 
 interface MovieCatalogueDataSource {
 
-    fun getMovies(): LiveData<Resource<PagedList<MovieTvEntity>>>
+    fun getMovies(type: String): LiveData<Resource<PagedList<MovieTvEntity>>>
 
-    fun getTvShows(): LiveData<Resource<PagedList<MovieTvEntity>>>
+    fun getTvShows(type: String): LiveData<Resource<PagedList<MovieTvEntity>>>
 
     fun getDetailMovie(id: Int): LiveData<DetailMovieResponse>
 
     fun getDetailTvShow(id: Int): LiveData<DetailTvShowResponse>
 
-    fun getFavoriteMovie(): LiveData<PagedList<MovieTvEntity>>
+    fun getFavorite(type: String): LiveData<PagedList<MovieTvEntity>>
 
     fun setFavorite(data: MovieTvEntity, state: Boolean)
+
+    fun sortByName(type: String, sort: String): LiveData<PagedList<MovieTvEntity>>
 }

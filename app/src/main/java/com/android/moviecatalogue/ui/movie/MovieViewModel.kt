@@ -13,6 +13,6 @@ import javax.inject.Inject
 class MovieViewModel @Inject constructor(
     private val movieCatalogueRepository: MovieCatalogueRepository) : ViewModel() {
 
-    fun getMovies(): LiveData<Resource<PagedList<MovieTvEntity>>> =
-        movieCatalogueRepository.getMovies()
+    fun getMovies(type: String): LiveData<Resource<PagedList<MovieTvEntity>>> =
+        movieCatalogueRepository.getMovies(type)
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.moviecatalogue.R
 import com.android.moviecatalogue.databinding.FragmentTvShowBinding
 import com.android.moviecatalogue.ui.adapter.MovieTvAdapter
+import com.android.moviecatalogue.utils.Constant
 import com.android.moviecatalogue.utils.CustomMarginItemDecoration
 import com.android.moviecatalogue.vo.Status
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +34,7 @@ class TvShowFragment : Fragment() {
 
     private fun getTvShows() {
         val tvShowAdapter = MovieTvAdapter()
-        tvShowViewModel.getTvShows().observe(viewLifecycleOwner, { tvShows ->
+        tvShowViewModel.getTvShows(Constant.TV_SHOW).observe(viewLifecycleOwner, { tvShows ->
             if(tvShows != null){
                 when(tvShows.status){
                     Status.LOADING -> showLoading(true)

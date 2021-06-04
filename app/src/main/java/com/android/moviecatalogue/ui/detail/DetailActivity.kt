@@ -10,6 +10,8 @@ import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion
 import com.android.moviecatalogue.data.source.remote.response.DetailMovieResponse
 import com.android.moviecatalogue.data.source.remote.response.DetailTvShowResponse
 import com.android.moviecatalogue.databinding.ActivityDetailBinding
+import com.android.moviecatalogue.utils.Constant.Companion.MOVIE
+import com.android.moviecatalogue.utils.Constant.Companion.TV_SHOW
 import com.android.moviecatalogue.utils.EspressoIdlingResource
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -35,11 +37,17 @@ class DetailActivity : AppCompatActivity() {
 
         EspressoIdlingResource.increment()
 
+        setDetail()
+
+    }
+
+    private fun setDetail() {
         val data = intent.getParcelableExtra<MovieTvEntity>(EXTRA_ENTITY)
         if(data != null){
             when(data.type){
-                "Movie" -> {
+                MOVIE -> {
                     data.id?.let { viewModel.setSelectedMovie(it) }
+
                     viewModel.getMovie().observe(this, {
 
                         showDetailMovie(it)
@@ -49,15 +57,9 @@ class DetailActivity : AppCompatActivity() {
                         }
 
                     })
-                    var statusFavorite = data.isFavorite
-                    setStatusFavorite(statusFavorite)
-                    binding.fabFavorite.setOnClickListener {
-                        statusFavorite = !statusFavorite
-                        viewModel.setFavorite(data, statusFavorite)
-                        setStatusFavorite(statusFavorite)
-                    }
+
                 }
-                "TvShow" -> {
+                TV_SHOW -> {
                     data.id?.let { viewModel.setSelectedTvShow(it) }
                     viewModel.getTvShow().observe(this, {
 
@@ -68,59 +70,18 @@ class DetailActivity : AppCompatActivity() {
                         }
 
                     })
-                    var statusFavorite = data.isFavorite
-                    setStatusFavorite(statusFavorite)
-                    binding.fabFavorite.setOnClickListener {
-                        statusFavorite = !statusFavorite
-                        viewModel.setFavorite(data, statusFavorite)
-                        setStatusFavorite(statusFavorite)
-                    }
                 }
             }
 
-        }
-
-        /*
-        val extras = intent.extras
-        if (extras != null) {
-
-            val movieId = extras.getInt(EXTRA_MOVIE)
-
-            viewModel.setSelectedMovie(movieId)
-            viewModel.getMovie().observe(this, {
-
-                showDetailMovie(it)
-
-                if(!EspressoIdlingResource.idlingResource.isIdleNow){
-                    EspressoIdlingResource.decrement()
-                }
-
-            })
-            var statusFavorite = extras.getBoolean(EXTRA_FAVORITE)
-            val movieEntity = intent.getParcelableExtra<MovieTvEntity>("entity")
+            var statusFavorite = data.isFavorite
             setStatusFavorite(statusFavorite)
             binding.fabFavorite.setOnClickListener {
                 statusFavorite = !statusFavorite
-                if (movieEntity != null) {
-                    viewModel.setFavorite(movieEntity, statusFavorite)
-                }
+                viewModel.setFavorite(data, statusFavorite)
                 setStatusFavorite(statusFavorite)
             }
 
-            val tvShowId = extras.getInt(EXTRA_TV_SHOW)
-            viewModel.setSelectedTvShow(tvShowId)
-            viewModel.getTvShow().observe(this, {
-
-                showDetailTvShow(it)
-                if(!EspressoIdlingResource.idlingResource.isIdleNow){
-                    EspressoIdlingResource.decrement()
-                }
-            })
-
         }
-
-         */
-
     }
 
     private fun showDetailMovie(data: DetailMovieResponse) {
@@ -203,6 +164,11 @@ class DetailActivity : AppCompatActivity() {
         } else {
             binding.fabFavorite.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_favorite_border_24))
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     companion object{

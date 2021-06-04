@@ -13,6 +13,6 @@ import javax.inject.Inject
 class TvShowViewModel @Inject constructor(
     private val movieCatalogueRepository: MovieCatalogueRepository): ViewModel() {
 
-    fun getTvShows(): LiveData<Resource<PagedList<MovieTvEntity>>> =
-        movieCatalogueRepository.getTvShows()
+    fun getTvShows(type: String): LiveData<Resource<PagedList<MovieTvEntity>>> =
+        movieCatalogueRepository.getTvShows(type)
 }
