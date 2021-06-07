@@ -1,6 +1,7 @@
 package com.android.moviecatalogue.utils
 
 import com.android.moviecatalogue.data.source.local.entity.DataEntity
+import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
 import com.android.moviecatalogue.data.source.remote.response.DetailMovieResponse
 import com.android.moviecatalogue.data.source.remote.response.DetailTvShowResponse
 import com.android.moviecatalogue.data.source.remote.response.Genre
@@ -219,6 +220,36 @@ object DataDummy {
                 "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/w9MVFImrsQ4YkjG1bNGhNGulWwI.jpg")
         )
 
+
+        return tvShow
+    }
+
+    fun generateDummyMovies(): List<MovieTvEntity>{
+        val movie = ArrayList<MovieTvEntity>()
+
+        movie.add(
+            MovieTvEntity(id = 1,
+                title = "Dilwale Dulhania Le Jayenge",
+                releaseDate = "1995-10-20",
+                voteAverage = 8.7,
+                type = "Movie",
+                posterPath = "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/2CAL2433ZeIihfX1Hb2139CX0pW.jpg")
+        )
+
+        return movie
+    }
+
+    fun generateDummyTvShows() : List<MovieTvEntity>{
+        val tvShow = ArrayList<MovieTvEntity>()
+
+        tvShow.add(
+            MovieTvEntity(id = 1,
+                title = "I Am Not an Animal",
+                releaseDate = "2004-05-10",
+                voteAverage = 9.4,
+                type = "TvShow",
+                posterPath = "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/qG59J1Q7rpBc1dvku4azbzcqo8h.jpg")
+        )
 
         return tvShow
     }

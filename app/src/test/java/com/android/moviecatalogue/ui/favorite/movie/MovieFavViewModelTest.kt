@@ -1,4 +1,4 @@
-package com.android.moviecatalogue.ui.movie
+package com.android.moviecatalogue.ui.favorite.movie
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
@@ -9,12 +9,11 @@ import com.android.moviecatalogue.data.MovieCatalogueRepository
 import com.android.moviecatalogue.data.source.local.entity.MovieTvEntity
 import com.android.moviecatalogue.utils.Constant
 import com.android.moviecatalogue.utils.DataDummy
-import com.android.moviecatalogue.vo.Resource
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -23,41 +22,55 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.Executors
 
 @RunWith(MockitoJUnitRunner::class)
-class MovieViewModelTest {
-
-    private lateinit var movieViewModel: MovieViewModel
+class MovieFavViewModelTest{
+    private lateinit var viewModel: MovieFavViewModel
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Mock
-    private lateinit var movieCatalogueRepository: MovieCatalogueRepository
+    private lateinit var repository: MovieCatalogueRepository
 
     @Mock
-    private lateinit var  observer: Observer<Resource<PagedList<MovieTvEntity>>>
+    private lateinit var observer: Observer<PagedList<MovieTvEntity>>
 
     @Before
-    fun setUp() {
-        movieViewModel = MovieViewModel(movieCatalogueRepository)
+    fun setUp(){
+        viewModel = MovieFavViewModel(repository)
     }
 
     @Test
-    fun getMovie() {
-        val movies = PagedTestDataSources.snapshot(DataDummy.generateDummyMovies())
-        val expected = MutableLiveData<Resource<PagedList<MovieTvEntity>>>()
-        expected.value = Resource.success(movies)
+    fun `getMovieFavorite should be success`(){
+        val expected = MutableLiveData<PagedList<MovieTvEntity>>()
+        expected.value = PagedTestDataSources.snapshot(DataDummy.generateDummyMovies())
 
-        `when`(movieCatalogueRepository.getMovies(Constant.MOVIE)).thenReturn(expected)
+        `when`(repository.getFavorite(Constant.MOVIE)).thenReturn(expected)
 
-        movieViewModel.getMovies(Constant.MOVIE).observeForever(observer)
+        viewModel.getMovieFavorites(Constant.MOVIE).observeForever(observer)
         verify(observer).onChanged(expected.value)
-        verify(movieCatalogueRepository).getMovies(Constant.MOVIE)
+        verify(repository).getFavorite(Constant.MOVIE)
 
         val expectedValue = expected.value
-        val actualValue = movieViewModel.getMovies(Constant.MOVIE).value
+        val actualValue = viewModel.getMovieFavorites(Constant.MOVIE).value
         assertEquals(expectedValue, actualValue)
-        assertEquals(expectedValue?.data, actualValue?.data)
-        assertEquals(expectedValue?.data?.size, actualValue?.data?.size)
+        assertEquals(expectedValue?.snapshot(), actualValue?.snapshot())
+        assertEquals(expectedValue?.size, actualValue?.size)
+
+    }
+
+    @Test
+    fun `getMovieFavorite should be success but data is empty`() {
+        val expected = MutableLiveData<PagedList<MovieTvEntity>>()
+        expected.value = PagedTestDataSources.snapshot()
+
+        `when`(repository.getFavorite(Constant.MOVIE)).thenReturn(expected)
+
+        viewModel.getMovieFavorites(Constant.MOVIE).observeForever(observer)
+        verify(observer).onChanged(expected.value)
+        verify(repository).getFavorite(Constant.MOVIE)
+
+        val actualValueDataSize = viewModel.getMovieFavorites(Constant.MOVIE).value?.size
+        Assert.assertTrue("size of data should be 0, actual is $actualValueDataSize", actualValueDataSize == 0)
     }
 
     class PagedTestDataSources private constructor(private val items: List<MovieTvEntity>) : PositionalDataSource<MovieTvEntity>() {

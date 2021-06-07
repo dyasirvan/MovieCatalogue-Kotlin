@@ -5,29 +5,82 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.moviecatalogue.R
+import com.android.moviecatalogue.databinding.FragmentTvFavBinding
+import com.android.moviecatalogue.ui.adapter.MovieTvAdapter
+import com.android.moviecatalogue.utils.Constant
+import com.android.moviecatalogue.utils.CustomMarginItemDecoration
+import com.android.moviecatalogue.utils.SortUtils
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TvFavFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class TvFavFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentTvFavBinding
+    private val viewModel: TvFavViewModel by viewModels()
+    private val tvAdapter = MovieTvAdapter()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if(activity != null){
+            showAllData()
+
+            binding.btnSort.setOnClickListener {
+                val dialog = BottomSheetDialog(requireContext())
+                val viewBottomSheetDialog = layoutInflater.inflate(R.layout.bottom_sheet_dialog, null)
+                val btnClose = viewBottomSheetDialog.findViewById<ImageView>(R.id.btn_close)
+                btnClose.setOnClickListener { dialog.dismiss() }
+                val sortAsc = viewBottomSheetDialog.findViewById<RelativeLayout>(R.id.ascending)
+                sortAsc.setOnClickListener {
+                    dialog.dismiss()
+                    sortByName(SortUtils.ASCENDING)
+                }
+                val sortDesc = viewBottomSheetDialog.findViewById<RelativeLayout>(R.id.descending)
+                sortDesc.setOnClickListener {
+                    dialog.dismiss()
+                    sortByName(SortUtils.DESCENDING)
+                }
+                dialog.setCancelable(true)
+                dialog.setContentView(viewBottomSheetDialog)
+                dialog.show()
+            }
+
+            setupRecyclerView()
         }
+    }
+
+    private fun setupRecyclerView() {
+        with(binding.rvTvFav){
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            addItemDecoration(
+                CustomMarginItemDecoration(
+                    resources.getDimension(R.dimen.margin_16).toInt()
+                )
+            )
+            setHasFixedSize(false)
+            adapter = tvAdapter
+        }
+    }
+
+    private fun sortByName(sort: String) {
+        viewModel.sortByName(Constant.MOVIE, sort).observe(viewLifecycleOwner, { movies ->
+            if(movies != null){
+                tvAdapter.submitList(movies)
+            }
+        })
+    }
+
+    private fun showAllData() {
+        viewModel.getTvFavorites(Constant.TV_SHOW).observe(viewLifecycleOwner, {tv ->
+            if(tv != null){
+                tvAdapter.submitList(tv)
+            }
+        })
     }
 
     override fun onCreateView(
@@ -35,26 +88,8 @@ class TvFavFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tv_fav, container, false)
+        binding = FragmentTvFavBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TvFavFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TvFavFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

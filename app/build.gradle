@@ -95,7 +95,6 @@ dependencies {
     kapt "androidx.room:room-compiler:2.3.0"
 
     //paging
-    //versi sesuai modul, kalau di ubah ke versi 3 ada yg deprecated dan blm sempat mempelajari
     implementation "androidx.paging:paging-runtime-ktx:2.1.1"
 
     //hilt

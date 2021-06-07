@@ -31,31 +31,27 @@ class MovieFavFragment : Fragment() {
 
             showMovieFavorites()
 
-            btnSortClicking()
+            binding.btnSort.setOnClickListener {
+                val dialog = BottomSheetDialog(requireContext())
+                val viewBottomSheetDialog = layoutInflater.inflate(R.layout.bottom_sheet_dialog, null)
+                val btnClose = viewBottomSheetDialog.findViewById<ImageView>(R.id.btn_close)
+                btnClose.setOnClickListener { dialog.dismiss() }
+                val sortAsc = viewBottomSheetDialog.findViewById<RelativeLayout>(R.id.ascending)
+                sortAsc.setOnClickListener {
+                    dialog.dismiss()
+                    sortByName(SortUtils.ASCENDING)
+                }
+                val sortDesc = viewBottomSheetDialog.findViewById<RelativeLayout>(R.id.descending)
+                sortDesc.setOnClickListener {
+                    dialog.dismiss()
+                    sortByName(SortUtils.DESCENDING)
+                }
+                dialog.setCancelable(true)
+                dialog.setContentView(viewBottomSheetDialog)
+                dialog.show()
+            }
 
             setupRecyclerView()
-        }
-    }
-
-    private fun btnSortClicking() {
-        binding.btnSort.setOnClickListener {
-            val dialog = BottomSheetDialog(requireContext())
-            val viewBottomSheetDialog = layoutInflater.inflate(R.layout.bottom_sheet_dialog, null)
-            val btnClose = viewBottomSheetDialog.findViewById<ImageView>(R.id.btn_close)
-            btnClose.setOnClickListener { dialog.dismiss() }
-            val sortAsc = viewBottomSheetDialog.findViewById<RelativeLayout>(R.id.ascending)
-            sortAsc.setOnClickListener {
-                dialog.dismiss()
-                sortByName(SortUtils.ASCENDING)
-            }
-            val sortDesc = viewBottomSheetDialog.findViewById<RelativeLayout>(R.id.descending)
-            sortDesc.setOnClickListener {
-                dialog.dismiss()
-                sortByName(SortUtils.DESCENDING)
-            }
-            dialog.setCancelable(false)
-            dialog.setContentView(viewBottomSheetDialog)
-            dialog.show()
         }
     }
 

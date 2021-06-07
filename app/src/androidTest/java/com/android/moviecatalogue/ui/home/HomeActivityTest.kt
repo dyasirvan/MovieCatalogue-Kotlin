@@ -5,6 +5,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.pressBack
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -61,6 +62,15 @@ class HomeActivityTest {
         onView(withId(R.id.tv_status)).check(matches(isDisplayed()))
 
         onView(withId(R.id.img_thumbnail)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.fab_favorite)).perform(click())
+
+        onView(isRoot()).perform(pressBack())
+
+        onView(withText("Movie")).perform(click())
+        onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
+
+        onView(withId(R.id.fab_favorite)).perform(click())
     }
 
     @Test
@@ -88,5 +98,15 @@ class HomeActivityTest {
         onView(withId(R.id.tv_status)).check(matches(isDisplayed()))
 
         onView(withId(R.id.img_thumbnail)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.fab_favorite)).perform(click())
+
+        onView(isRoot()).perform(pressBack())
+
+        onView(withText("Tv Show")).perform(click())
+        onView(withId(R.id.rv_tv_show)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
+
+        onView(withId(R.id.fab_favorite)).perform(click())
     }
+
 }

@@ -81,7 +81,6 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService){
     }
 
     fun getDetailMovie(id: Int, callback: LoadDetailMovieCallback) {
-//        EspressoIdlingResource.increment()
         apiService.getDetailMovie(id = id).enqueue(object : Callback<DetailMovieResponse>{
             override fun onResponse(call: Call<DetailMovieResponse>,
                                     response: Response<DetailMovieResponse>) {
@@ -91,7 +90,6 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService){
                         callback.onDetailMovieReceive(movies!!)
 
                     }, 2000)
-//                    EspressoIdlingResource.decrement()
 
                 }
             }
@@ -113,7 +111,6 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService){
                     resultMovie?.title,
                     resultMovie?.score)
                 callback.onDetailMovieReceive(movies)
-//                EspressoIdlingResource.decrement()
             }
 
         })
@@ -126,7 +123,6 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService){
                 if (response.isSuccessful){
                     val tvShows = response.body()
                     callback.onDetailTvReceive(tvShows!!)
-//                    EspressoIdlingResource.decrement()
                 }
             }
 
@@ -147,18 +143,9 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService){
                     resultTvShow?.status,
                     resultTvShow?.score)
                 callback.onDetailTvReceive(tvShows)
-//                EspressoIdlingResource.decrement()
             }
 
         })
-    }
-
-    interface LoadMoviesCallback {
-        fun onAllMoviesReceive(moviesResponse: List<ResultMovie>)
-    }
-
-    interface LoadTvsCallback {
-        fun onAllTvsReceive(tvsResponse: List<ResultTvShow>)
     }
 
     interface LoadDetailMovieCallback {

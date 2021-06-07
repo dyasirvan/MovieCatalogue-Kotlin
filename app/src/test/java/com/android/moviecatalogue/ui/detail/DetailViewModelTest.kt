@@ -3,7 +3,6 @@ package com.android.moviecatalogue.ui.detail
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.android.moviecatalogue.data.source.remote.network.ApiConfig.Companion.API_KEY
 import com.android.moviecatalogue.data.MovieCatalogueRepository
 import com.android.moviecatalogue.data.source.remote.response.DetailMovieResponse
 import com.android.moviecatalogue.data.source.remote.response.DetailTvShowResponse
@@ -46,10 +45,10 @@ class DetailViewModelTest {
         val movie = MutableLiveData<DetailMovieResponse>()
         movie.value = dummyDetailMovies
 
-        Mockito.`when`(repository.getDetailMovie(1, API_KEY)).thenReturn(movie)
-        viewModel.setSelectedMovie(1, API_KEY)
+        Mockito.`when`(repository.getDetailMovie(1)).thenReturn(movie)
+        viewModel.setSelectedMovie(1)
         val detailMovie = viewModel.getMovie().value
-        verify(repository).getDetailMovie(1, API_KEY)
+        verify(repository).getDetailMovie(1)
         assertNotNull(detailMovie)
         assertEquals(dummyDetailMovies.title, detailMovie?.title)
         assertEquals(dummyDetailMovies.overview, detailMovie?.overview)
@@ -68,10 +67,10 @@ class DetailViewModelTest {
         val tvShow = MutableLiveData<DetailTvShowResponse>()
         tvShow.value = dummyDetailTvShow
 
-        Mockito.`when`(repository.getDetailTvShow(1, API_KEY)).thenReturn(tvShow)
-        viewModel.setSelectedTvShow(1, API_KEY)
+        Mockito.`when`(repository.getDetailTvShow(1)).thenReturn(tvShow)
+        viewModel.setSelectedTvShow(1)
         val detailTvShow = viewModel.getTvShow().value
-        verify(repository).getDetailTvShow(1, API_KEY)
+        verify(repository).getDetailTvShow(1)
         assertNotNull(detailTvShow)
         assertEquals(dummyDetailTvShow.name, detailTvShow?.name)
         assertEquals(dummyDetailTvShow.overview, detailTvShow?.overview)
